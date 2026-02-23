@@ -10,6 +10,7 @@ Generate meeting-note style summaries from TeamSpeak `.wav` recordings in `voice
 - Probe audio with `ffprobe` (from ffmpeg).
 - Optional preprocess: bundle all input wav tracks into one multitrack `.mka` container.
 - Transcribe with local `whisper` CLI or OpenAI cloud (`hybrid` mode supported).
+- Summarize via Ollama OpenAI-compatible endpoint (default `http://192.168.10.60:11434/v1`).
 - Merge multi-track segments into one timeline and produce Markdown meeting notes.
 
 ## Requirements
@@ -17,8 +18,9 @@ Generate meeting-note style summaries from TeamSpeak `.wav` recordings in `voice
 - Python 3.12+
 - `uv`
 - `ffmpeg` (must include `ffprobe`)
-- Optional for cloud ASR/summarization: `OPENAI_API_KEY`
+- Optional for cloud ASR transcription fallback: `OPENAI_API_KEY`
 - Optional for local ASR: `whisper` CLI in `PATH`
+- Optional for Ollama auth/customization: `OLLAMA_API_KEY`, `OLLAMA_BASE_URL`, `OLLAMA_MODEL`
 
 ## Setup
 
@@ -39,6 +41,25 @@ uv run teamspeak-meeting-notes \
 ```
 
 Output Markdown will be written into `output/`.
+
+### Ollama summarization settings
+
+The summary step uses Ollama by default through OpenAI-compatible API.
+
+Defaults:
+
+- `OLLAMA_BASE_URL=http://192.168.10.60:11434/v1`
+- `OLLAMA_MODEL=glm-4.7-flash:q4_K_M`
+- `OLLAMA_API_KEY=ollama`
+
+Override example:
+
+```bash
+export OLLAMA_BASE_URL=http://192.168.10.60:11434/v1
+export OLLAMA_MODEL=ministral-3:14b
+export OLLAMA_API_KEY=ollama
+uv run teamspeak-meeting-notes --audio-dir voice_record_5m --recording-starter 曾庆宝
+```
 
 ### Bundle only (preprocess only)
 
