@@ -1,0 +1,35 @@
+[project]
+name = "teamspeak-meeting-notes"
+version = "0.1.0"
+description = "Generate meeting-note summaries from TeamSpeak recordings"
+readme = "README.md"
+authors = [
+    { name = "oxyethylene", email = "ljunyfor@outlook.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.66.3",
+]
+
+[project.scripts]
+teamspeak-meeting-notes = "teamspeak_meeting_notes:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "ruff>=0.9.9",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["uv_build>=0.10.2,<0.11.0"]
+build-backend = "uv_build"
