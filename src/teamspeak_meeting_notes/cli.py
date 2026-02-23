@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import logging
 from pathlib import Path
 
 from teamspeak_meeting_notes.pipeline import PipelineConfig, run_pipeline
@@ -25,20 +26,37 @@ def _build_parser() -> argparse.ArgumentParser:
         default="hybrid",
         help="local=whisper CLI, cloud=OpenAI API, hybrid=local then cloud fallback.",
     )
+    parser.add_argument(
+        "--whisper-device",
+        choices=("auto", "cpu", "mps", "cuda"),
+        default="auto",
+        help="Local Whisper device selection. auto prefers cuda, then mps, then cpu.",
+    )
     parser.add_argument("--language", type=str, default=None, help="ASR language hint, e.g. zh")
     parser.add_argument("--meeting-title", type=str, default=None)
+    parser.add_argument(
+        "--log-level",
+        choices=("DEBUG", "INFO", "WARNING", "ERROR"),
+        default="INFO",
+        help="Runtime log verbosity.",
+    )
     return parser
 
 
 def run_cli() -> None:
     parser = _build_parser()
     args = parser.parse_args()
+    logging.basicConfig(
+        level=getattr(logging, args.log_level),
+        format="%(asctime)s %(levelname)s %(name)s - %(message)s",
+    )
 
     config = PipelineConfig(
         audio_dir=args.audio_dir,
         recording_starter=args.recording_starter,
         output_dir=args.output_dir,
         asr_mode=args.asr_mode,
+        whisper_device=args.whisper_device,
         language=args.language,
         meeting_title=args.meeting_title,
     )
