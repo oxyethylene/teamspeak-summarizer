@@ -21,6 +21,22 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--output-dir", type=Path, default=Path("output"))
     parser.add_argument(
+        "--bundle-multitrack",
+        action="store_true",
+        help="Preprocess wav files into one multitrack .mka container before other steps.",
+    )
+    parser.add_argument(
+        "--bundle-only",
+        action="store_true",
+        help="Only create the multitrack bundle and stop.",
+    )
+    parser.add_argument(
+        "--bundle-path",
+        type=Path,
+        default=None,
+        help="Output path for multitrack bundle (default: output/multitrack_<meeting>.mka).",
+    )
+    parser.add_argument(
         "--asr-mode",
         choices=("local", "cloud", "hybrid"),
         default="hybrid",
@@ -55,6 +71,9 @@ def run_cli() -> None:
         audio_dir=args.audio_dir,
         recording_starter=args.recording_starter,
         output_dir=args.output_dir,
+        bundle_multitrack=args.bundle_multitrack,
+        bundle_only=args.bundle_only,
+        bundle_path=args.bundle_path,
         asr_mode=args.asr_mode,
         whisper_device=args.whisper_device,
         language=args.language,

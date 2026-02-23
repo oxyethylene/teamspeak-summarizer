@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 from teamspeak_meeting_notes.audio_probe import ensure_ffmpeg_tools, probe_audio
+from teamspeak_meeting_notes.bundler import bundle_tracks
 from teamspeak_meeting_notes.filename_parser import parse_tracks
 from teamspeak_meeting_notes.models import ParsedTrack, TimelineUtterance, TranscriptSegment
 from teamspeak_meeting_notes.summarize import summarize_heuristic, summarize_with_openai
@@ -20,6 +21,9 @@ class PipelineConfig:
     audio_dir: Path
     recording_starter: str | None
     output_dir: Path
+    bundle_multitrack: bool
+    bundle_only: bool
+    bundle_path: Path | None
     asr_mode: AsrMode
     whisper_device: WhisperDevice
     language: str | None
@@ -65,6 +69,17 @@ def run_pipeline(config: PipelineConfig) -> Path:
     ensure_ffmpeg_tools()
     tracks = parse_tracks(audio_dir=config.audio_dir, recording_starter=config.recording_starter)
     logger.info("Parsed %d track(s)", len(tracks))
+
+    if config.bundle_multitrack or config.bundle_only:
+        bundle_path = config.bundle_path
+        if bundle_path is None:
+            bundle_path = config.output_dir / f"multitrack_{_meeting_slug(tracks)}.mka"
+        logger.info("Bundling multitrack container to %s", bundle_path)
+        bundle_tracks(tracks=tracks, output_path=bundle_path)
+        logger.info("Multitrack bundle ready: %s", bundle_path)
+        if config.bundle_only:
+            return bundle_path
+
     for track in tracks:
         info = probe_audio(track.path)
         logger.info(

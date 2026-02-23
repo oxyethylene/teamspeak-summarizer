@@ -8,6 +8,7 @@ Generate meeting-note style summaries from TeamSpeak `.wav` recordings in `voice
 - Support both `playback_*` and `capture_*` files.
 - Use `--recording-starter` to label `capture_*` track speaker.
 - Probe audio with `ffprobe` (from ffmpeg).
+- Optional preprocess: bundle all input wav tracks into one multitrack `.mka` container.
 - Transcribe with local `whisper` CLI or OpenAI cloud (`hybrid` mode supported).
 - Merge multi-track segments into one timeline and produce Markdown meeting notes.
 
@@ -31,12 +32,24 @@ uv sync --all-groups
 uv run teamspeak-meeting-notes \
 	--audio-dir voice_record \
 	--recording-starter 曾庆宝 \
+	--bundle-multitrack \
 	--asr-mode hybrid \
 	--language zh \
 	--meeting-title "TeamSpeak 日会"
 ```
 
 Output Markdown will be written into `output/`.
+
+### Bundle only (preprocess only)
+
+```bash
+uv run teamspeak-meeting-notes \
+	--audio-dir voice_record \
+	--recording-starter 曾庆宝 \
+	--bundle-only
+```
+
+This creates `output/multitrack_<meeting>.mka` where each speaker/file is a separate audio stream.
 
 ## Lint & Format (ruff)
 
