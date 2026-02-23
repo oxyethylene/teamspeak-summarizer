@@ -1,5 +1,9 @@
 # TeamSpeak Meeting Notes
 
+**still work in progress**
+
+inspired by [this post](https://www.xiaoheihe.cn/app/bbs/link/100d71249828?h_camp=link&h_session_id=EFsalkHK1dfLS0B4&h_src=YXBwX3NoYXJl)
+
 Generate meeting-note style summaries from TeamSpeak `.wav` recordings in `voice_record/`.
 
 ## Features
